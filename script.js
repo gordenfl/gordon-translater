@@ -423,21 +423,32 @@ function updateTextCounts() {
 
 // 翻译文本
 async function translateText() {
+    console.log('开始翻译:', appState.sourceText);
+    
     if (!appState.sourceText.trim()) {
+        console.log('源文本为空，清除翻译');
         clearTranslation();
         return;
     }
     
+    console.log('显示加载状态');
     showLoading();
     
     try {
         // 使用Google Translate API进行翻译
+        console.log('调用翻译API:', {
+            text: appState.sourceText,
+            source: appState.sourceLanguage,
+            target: appState.targetLanguage
+        });
+        
         const translation = await translateWithGoogle(
             appState.sourceText,
             appState.sourceLanguage,
             appState.targetLanguage
         );
         
+        console.log('翻译完成:', translation);
         appState.translatedText = translation;
         updateTranslationDisplay();
         
@@ -445,30 +456,79 @@ async function translateText() {
         console.error('翻译错误:', error);
         showTranslationError(error.message);
     } finally {
+        console.log('隐藏加载状态');
         hideLoading();
     }
 }
 
 // 使用Google Translate API翻译
 async function translateWithGoogle(text, sourceLang, targetLang) {
-    // 这里使用Google Translate的免费API
-    // 注意：在实际生产环境中，你需要使用官方的Google Cloud Translation API
+    // 尝试多个翻译API端点
+    const endpoints = [
+        // 主要端点
+        `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`,
+        // 备用端点1
+        `https://translate.googleapis.com/translate_a/single?client=webapp&sl=${sourceLang}&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`,
+        // 备用端点2
+        `https://clients5.google.com/translate_a/single?client=dict-chrome-ex&sl=${sourceLang}&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`
+    ];
     
-    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
+    console.log('翻译请求:', { text, sourceLang, targetLang });
     
-    const response = await fetch(url);
-    
-    if (!response.ok) {
-        throw new Error('翻译服务暂时不可用，请稍后重试');
+    for (let i = 0; i < endpoints.length; i++) {
+        const url = endpoints[i];
+        console.log(`尝试端点 ${i + 1}:`, url);
+        
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                }
+            });
+            
+            console.log(`端点 ${i + 1} 响应状态:`, response.status);
+            
+            if (!response.ok) {
+                console.warn(`端点 ${i + 1} 失败，状态码:`, response.status);
+                continue;
+            }
+            
+            const data = await response.json();
+            console.log(`端点 ${i + 1} 响应数据:`, data);
+            
+            if (data && data[0] && Array.isArray(data[0])) {
+                // Google Translate API 返回格式: [[[翻译片段1], [翻译片段2], ...], ...]
+                // 我们需要将所有翻译片段连接起来
+                let result = '';
+                for (let j = 0; j < data[0].length; j++) {
+                    if (data[0][j] && data[0][j][0]) {
+                        result += data[0][j][0];
+                    }
+                }
+                
+                if (result.trim()) {
+                    console.log('翻译结果:', result);
+                    return result;
+                } else {
+                    console.warn(`端点 ${i + 1} 翻译结果为空`);
+                    continue;
+                }
+            } else {
+                console.warn(`端点 ${i + 1} 数据格式错误`);
+                continue;
+            }
+        } catch (error) {
+            console.warn(`端点 ${i + 1} 请求失败:`, error.message);
+            if (i === endpoints.length - 1) {
+                // 最后一个端点也失败了
+                throw new Error(`所有翻译服务都不可用。最后错误: ${error.message}`);
+            }
+            continue;
+        }
     }
     
-    const data = await response.json();
-    
-    if (data && data[0] && data[0][0]) {
-        return data[0][0][0];
-    } else {
-        throw new Error('翻译结果格式错误');
-    }
+    throw new Error('所有翻译服务都不可用');
 }
 
 // 更新翻译显示
@@ -607,6 +667,20 @@ function handleShowPhoneticsChange() {
 function handleThemeChange() {
     appState.theme = elements.themeSelect.value;
     applyTheme(appState.theme);
+    saveSettings();
+}
+
+// 快速切换主题（浅色/深色之间切换）
+function toggleThemeQuick() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    // 更新设置
+    appState.theme = newTheme;
+    elements.themeSelect.value = newTheme;
+    
+    // 应用新主题
+    applyTheme(newTheme);
     saveSettings();
 }
 
