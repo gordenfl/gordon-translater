@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gordon Translater - 在线翻译工具</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-language"></i>
+                <span>Gordon Translater</span>
+            </div>
+            <div class="header-actions">
+                <button class="btn-swap" id="swapLanguages">
+                    <i class="fas fa-exchange-alt"></i>
+                </button>
+                <button class="btn-settings" id="themeToggle" aria-label="切换主题">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="btn-settings" id="settingsBtn">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- 主要内容区域 -->
+        <main class="main-content">
+            <!-- 左侧输入区域 -->
+            <div class="input-section">
+                <div class="language-selector">
+                    <div class="language-dropdown">
+                        <button class="language-btn" id="sourceLanguageBtn">
+                            <span class="flag">🇨🇳</span>
+                            <span class="language-name">中文</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-menu" id="sourceLanguageMenu">
+                            <!-- 语言选项将通过JavaScript动态生成 -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-input-container">
+                    <textarea 
+                        class="text-input" 
+                        id="sourceText" 
+                        placeholder="请输入要翻译的文本..."
+                        rows="8"
+                    ></textarea>
+                    <div class="input-actions">
+                        <button class="btn-clear" id="clearSource">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <button class="btn-speak" id="speakSource">
+                            <i class="fas fa-volume-up"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧输出区域 -->
+            <div class="output-section">
+                <div class="language-selector">
+                    <div class="language-dropdown">
+                        <button class="language-btn" id="targetLanguageBtn">
+                            <span class="flag">🇺🇸</span>
+                            <span class="language-name">英语</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-menu" id="targetLanguageMenu">
+                            <!-- 语言选项将通过JavaScript动态生成 -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-output-container">
+                    <div class="text-output" id="translatedText">
+                        <div class="placeholder-text">
+                            <i class="fas fa-arrow-left"></i>
+                            <span>翻译结果将在这里显示</span>
+                        </div>
+                    </div>
+                    <div class="output-actions">
+                        <button class="btn-copy" id="copyTranslation">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <button class="btn-speak" id="speakTranslation">
+                            <i class="fas fa-volume-up"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 底部工具栏 -->
+        <footer class="footer">
+            <div class="translation-info">
+                <span id="charCount">0 字符</span>
+                <span class="separator">•</span>
+                <span id="wordCount">0 词</span>
+            </div>
+            <div class="footer-actions">
+                <button class="btn-translate" id="translateBtn">
+                    <i class="fas fa-language"></i>
+                    翻译
+                </button>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 设置模态框 -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>设置</h3>
+                <button class="modal-close" id="closeSettings">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-item">
+                    <label>自动翻译</label>
+                    <input type="checkbox" id="autoTranslate" checked>
+                </div>
+                <div class="setting-item">
+                    <label>显示音标</label>
+                    <input type="checkbox" id="showPhonetics">
+                </div>
+                <div class="setting-item">
+                    <label>主题</label>
+                    <select id="themeSelect">
+                        <option value="light">浅色</option>
+                        <option value="dark">深色</option>
+                        <option value="auto">自动</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 加载指示器 -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>正在翻译...</span>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

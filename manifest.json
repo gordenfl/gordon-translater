@@ -1,0 +1,48 @@
+{
+    "manifest_version": 3,
+    "name": "Gordon Translater",
+    "description": "A modern Google Translate client with light/dark themes, time-based auto theme, and selection-to-translate.",
+    "version": "1.2.0",
+    "minimum_chrome_version": "114",
+    "action": {
+        "default_title": "Gordon Translater"
+    },
+    "icons": {
+        "16": "icons/icon16.png",
+        "32": "icons/icon32.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
+    },
+    "background": {
+        "service_worker": "background.js",
+        "type": "module"
+    },
+    "side_panel": {
+        "default_path": "index.html"
+    },
+    "permissions": [
+        "storage",
+        "sidePanel"
+    ],
+    "host_permissions": [
+        "<all_urls>",
+        "https://translate.googleapis.com/*",
+        "https://fonts.googleapis.com/*",
+        "https://fonts.gstatic.com/*",
+        "https://cdnjs.cloudflare.com/*"
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "content.js"
+            ],
+            "run_at": "document_idle"
+        }
+    ],
+    "content_security_policy": {
+        "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' https://translate.googleapis.com; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:;"
+    }
+}
