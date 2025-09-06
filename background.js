@@ -1,7 +1,19 @@
-// 点击扩展图标时打开侧边栏
+// 点击扩展图标时打开侧边栏并注入content script
 chrome.action.onClicked.addListener(async (tab) => {
   try {
     console.log('用户点击扩展图标，打开侧边栏');
+    
+    // 动态注入content script到当前标签页
+    try {
+      await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        files: ['content.js']
+      });
+      console.log('Content script已注入到当前标签页');
+    } catch (injectError) {
+      console.warn('注入content script失败:', injectError);
+      // 某些页面（如chrome://页面）无法注入script，这是正常的
+    }
     
     // 检查sidePanel API是否可用
     if (!chrome.sidePanel) {
