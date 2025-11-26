@@ -505,6 +505,7 @@ function updateTextCounts() {
 async function translateText() {
   console.log("开始翻译:", appState.sourceText);
 
+  // trim() 只去除首尾空白字符，不会影响文字中间的空格
   if (!appState.sourceText.trim()) {
     console.log("源文本为空，清除翻译");
     clearTranslation();
@@ -512,7 +513,7 @@ async function translateText() {
   }
 
   console.log("显示加载状态");
-  showLoading();
+  //showLoading();
 
   try {
     // 使用Google Translate API进行翻译
@@ -620,11 +621,15 @@ async function translateWithGoogle(text, sourceLang, targetLang) {
 // 更新翻译显示
 function updateTranslationDisplay() {
   if (appState.translatedText) {
+    // 将换行符 \n 替换为 <br/>
+    let textWithBreaks = appState.translatedText.replace(/\n/g, "<br/>");
+
     elements.translatedText.innerHTML = `
             <div class="translation-result fade-in">
-                ${appState.translatedText}
+                ${textWithBreaks}
             </div>
         `;
+    //console.log(textWithBreaks);
   } else {
     clearTranslation();
   }
