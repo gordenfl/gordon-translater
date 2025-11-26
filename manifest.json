@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "Gordon Translater",
     "description": "A modern Google Translate client with light/dark themes, time-based auto theme, and selection-to-translate.",
-    "version": "1.2.1",
+    "version": "1.2.4",
     "minimum_chrome_version": "114",
     "action": {
         "default_title": "Gordon Translater"
@@ -21,7 +21,6 @@
         "default_path": "index.html"
     },
     "permissions": [
-        "storage",
         "sidePanel",
         "activeTab",
         "scripting"

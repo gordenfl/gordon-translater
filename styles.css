@@ -110,6 +110,10 @@ body {
 /* 语言选择器 */
 .language-selector {
     margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
 }
 
 .language-dropdown {
@@ -239,9 +243,6 @@ body {
 
 /* 操作按钮 */
 .input-actions, .output-actions {
-    position: absolute;
-    top: 12px;
-    right: 12px;
     display: flex;
     gap: 8px;
 }
